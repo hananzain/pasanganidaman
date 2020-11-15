@@ -19,7 +19,7 @@ Timestamp	Assalamualaikum, halo, kamu cewe apa cowo?	Nama kamu siapa? boleh nama
 0 11/12/2020 23:18:02	cewe	Hanz	5	5	5	5	5
 1 11/12/2020 23:18:18	cowo	Ucup	5	3	5	4	2
 2 11/13/2020 0:06:19	cewe	Atika Resti Rahmanda	3	5	5	3	1
-3 11/13/2020 4:38:18	cowo	Jay	5	5	5	5	5
+3 11/13/2020 4:38:18	cowo	Ezr	5	5	5	5	5
 4 11/13/2020 0:54:25	cowo	Wildan	4	4	4	4	2
 2. Data Preparation
 In [2]:
@@ -31,7 +31,7 @@ Siapa nama kamu?	Apa gender kamu?	Seberapa penting fisik pasangan bagi kamu?	Seb
 0	cewe	Hanz	5	5	5	5	5
 1 cowo	Ucup	5	3	5	4	2
 2 cewe	Atika Resti Rahmanda	3	5	5	3	1
-3 cowo	Jay	5	5	5	5	5
+3 cowo	Ezr	5	5	5	5	5
 4 cowo	Wildan	4	4	4	4	2
 In [3]:
 #Merename kolom supaya mudah dipanggil
@@ -98,7 +98,7 @@ Out[9]:
 Name: name, dtype: object
 In [10]:
 #Mengambil nama sebagai uji coba test 2
-test = x[df['name'] == 'Jay'].values
+test = x[df['name'] == 'Ucup'].values
 _, idx = f_nbrs.kneighbors(test)
 f_df.iloc[idx[0]]['name']
 Out[10]:
@@ -106,4 +106,4 @@ Out[10]:
 Name: name, dtype: object
 Insight dan Analisis :
 Insight 4: Hanz mempunyai preferensi yang mirip dengan Ezr
-Insight 5: Jay mempunyai preferensi yang mirip dengan Atika Resti Rahmada
+Insight 5: Ucup mempunyai preferensi yang mirip dengan Atika Resti Rahmada
