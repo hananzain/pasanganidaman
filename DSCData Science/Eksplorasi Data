@@ -1,0 +1,109 @@
+Tugas Event 2 - Solving Real-World Problems with Data Science¶
+Identitas:
+Nama :
+Hanan Nurul Hardyana Zain
+Universitas : Universitas Diponegoro
+Tanggal Mulai : 11 November 2020
+Sumber Dataset : Survey Gform mahasiswa jurusan Informatika Undip angkatan 2020
+1. Data Observation
+In [1]:
+#import library panda dan NearestNeighbors dari sklearn
+import pandas as pd
+from sklearn.neighbors import NearestNeighbors
+#membaca file csv
+df = pd.read_csv('respons2.csv')
+#menampilkan data csv (headnya saja)
+df.head()
+Out[1]:
+Timestamp	Assalamualaikum, halo, kamu cewe apa cowo?	Nama kamu siapa? boleh nama samaran kalo malu	Seberapa penting pasangan yang sesuai dengan tipe idaman kamu?	Seberapa penting pasangan dengan keaatan yang tinggi kepada Tuhan Yang Maha Esa?	Seberapa penting pasangan yang pinter buat kamu?	Seberapa penting frekuensi komunikasi tiap waktu?	Seberapa penting hadiah dari pasangan kamu?
+0 11/12/2020 23:18:02	cewe	Hanz	5	5	5	5	5
+1 11/12/2020 23:18:18	cowo	Ucup	5	3	5	4	2
+2 11/13/2020 0:06:19	cewe	Atika Resti Rahmanda	3	5	5	3	1
+3 11/13/2020 4:38:18	cowo	Jay	5	5	5	5	5
+4 11/13/2020 0:54:25	cowo	Wildan	4	4	4	4	2
+2. Data Preparation
+In [2]:
+#Menghapus Kolom timestamp karena tidak dibutuhkan dan kolom komentar karena tidak punta nilai kuantitatif
+df = df.iloc[:, 1:-1]
+df.head()
+Out[2]:
+Siapa nama kamu?	Apa gender kamu?	Seberapa penting fisik pasangan bagi kamu?	Seberapa penting selera humor bagi kamu?	Seberapa penting keromantisan bagi kamu?	Seberapa penting perhatian pacar bagi kamu?	Seberapa penting cara berpikir pacar bagi kamu?	Seberapa penting quality time dengan pacar?	Seberapa penting keseriusan bagi kamu?
+0	cewe	Hanz	5	5	5	5	5
+1 cowo	Ucup	5	3	5	4	2
+2 cewe	Atika Resti Rahmanda	3	5	5	3	1
+3 cowo	Jay	5	5	5	5	5
+4 cowo	Wildan	4	4	4	4	2
+In [3]:
+#Merename kolom supaya mudah dipanggil
+df.columns = ['name', 'gender', 'physic', 'humor', 'roman', 'attention', 'logic', 'qt', 'serious']
+df.head()
+Out[3]:
+name	gender	physic	humor	roman	attention	logic	qt	serious
+0 Hanz	cewe	5	5	5	5	5
+1 Ucup  cowo	5	3	5	4	2
+2 Atika Resti Rahmanda cewe	3	5	5	3	1
+3 Jay cowo	5	5	5	5	5
+4 Wildan cowo	4	4	4	4	2
+In [4]:
+#Mengklasifikasikan gender laki-laki dan perempuan
+df['gender'] = df['gender'].apply(lambda x:0 if x == 'Cowok' else 1)
+In [5]:
+m_df = df[df['gender'] == 0]
+f_df = df[df['gender'] == 1]
+3. Statistik & Data Analisis
+In [6]:
+#Mengimport matplotlib untuk menampilkan grafik
+import matplotlib.pyplot as plt
+
+#Menentukan nilai axis x dan y
+x_ax = ["pyhsic", "humor", "roman", "attention", "logic", "qt", "serious"]
+y_ax = [df.physic.mean(), df.humor.mean(), df.roman.mean(), df.attention.mean(), df.logic.mean(), df.qt.mean(), df.serious.mean()]
+y_m = [m_df.physic.mean(), m_df.humor.mean(), m_df.roman.mean(), m_df.attention.mean(), m_df.logic.mean(), m_df.qt.mean(), m_df.serious.mean()]
+y_f = [f_df.physic.mean(), f_df.humor.mean(), f_df.roman.mean(), f_df.attention.mean(), f_df.logic.mean(), f_df.qt.mean(), f_df.serious.mean()]
+
+#Menentukan atribut grafik
+fig = plt.figure()
+ax = fig.add_axes([0,0,1,1])
+ax.set_title("Rata-rata preferensi laki-laki dan perempuan")
+
+plt.plot(x_ax, y_ax, label="Umum")
+plt.plot(x_ax, y_m, label="cowo")
+plt.plot(x_ax, y_f, label="cewe")
+
+ax.legend()
+Out[6]:
+<matplotlib.legend.Legend at 0x2723b9beeb0>
+
+Insight dan Analisis :
+Insight 1: cowo sangat mempertimbangkan pentingnya pasangan yang cocok
+Insight 2: cewe sangat mempertimbangkan ketaatan beragama dan kepandaian
+Insight 3: Pintar dan beragama dinilai sangat berpengaruh dari semua preferensi
+4. Model Development
+In [7]:
+#Mengkalisifikasikan nama berdasarkan gender
+m_x = m_df.drop(['name', 'gender'], axis=1)
+f_x = f_df.drop(['name', 'gender'], axis=1)
+In [8]:
+#Mengaplikasikan NearestNeighbors untuk mencari kedekatan dari lawan jenis
+m_nbrs = NearestNeighbors(n_neighbors=1).fit(m_x)
+f_nbrs = NearestNeighbors(n_neighbors=1).fit(f_x)
+In [9]:
+#Mengambil nama sebagai uji coba test 1
+x = df.drop(['name', 'gender'], axis=1)
+test = x[df['name'] == 'Hanz'].values
+_, idx = m_nbrs.kneighbors(test)
+m_df.iloc[idx[0]]['name']
+Out[9]:
+19    Ezr
+Name: name, dtype: object
+In [10]:
+#Mengambil nama sebagai uji coba test 2
+test = x[df['name'] == 'Jay'].values
+_, idx = f_nbrs.kneighbors(test)
+f_df.iloc[idx[0]]['name']
+Out[10]:
+24    Atika Resti Rahmada 
+Name: name, dtype: object
+Insight dan Analisis :
+Insight 4: Hanz mempunyai preferensi yang mirip dengan Ezr
+Insight 5: Jay mempunyai preferensi yang mirip dengan Atika Resti Rahmada
